@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       FAKE_DEV: /dev/fake-dev0
-      TEST_VOL: ${{ github.workspace }}/test
+      TEST_VOL: ${{ github.workspace }}/.vol
+      TEST_SUBVOL: ${{ github.workspace }}/.vol/test
     steps:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -15,22 +16,16 @@ jobs:
           persist-credentials: 'false'
 
       - name: Create virtual block device
-        run: |
-          # create a 100M file that'll be used by the loopback device
-          dd if=/dev/zero of=$RUNNER_TEMP/dev0-backstore bs=1M count=200
-          
-          # create the loopback block device
-          # 200 hopefully won't collide with `ls -l /dev/loop*`
-          sudo mknod "$FAKE_DEV" b "$(grep 'loop' /proc/devices | awk '{print $1}')" 200
-          
-          sudo losetup "$FAKE_DEV" "$RUNNER_TEMP/dev0-backstore"
+        run: .github/create_block_device.sh "$RUNNER_TEMP/dev0-backstore" "$FAKE_DEV"
 
       - name: Create BTRFS volume
+        run: .github/create_btrfs_volume.sh "$FAKE_DEV" "$TEST_VOL" "$TEST_SUBVOL"
+
+      - name: Add testdata to the subvolume
         run: |
-          sudo mkfs.btrfs $FAKE_DEV
-          mkdir $TEST_VOL
-          sudo mount $FAKE_DEV $TEST_VOL
+          echo "hello, world" > $TEST_SUBVOL/file.txt
 
       - name: Test
         run: |
-          df -h
+          ls -l $TEST_VOL
+          ls -l $TEST_SUBVOL
