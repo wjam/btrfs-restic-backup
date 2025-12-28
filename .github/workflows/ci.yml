@@ -17,7 +17,7 @@ jobs:
       - name: Create virtual block device
         run: |
           # create a 100M file that'll be used by the loopback device
-          dd if=/dev/zero of=$RUNNER_TEMP/dev0-backstore bs=1M count=100
+          dd if=/dev/zero of=$RUNNER_TEMP/dev0-backstore bs=1M count=200
           
           # create the loopback block device
           # 200 hopefully won't collide with `ls -l /dev/loop*`
