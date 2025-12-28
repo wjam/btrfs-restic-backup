@@ -21,14 +21,15 @@ jobs:
           
           # create the loopback block device
           # 200 hopefully won't collide with `ls -l /dev/loop*`
-          mknod "$FAKE_DEV" b "$(grep 'loop' /proc/devices | awk '{print $1}')" 200
+          sudo mknod "$FAKE_DEV" b "$(grep 'loop' /proc/devices | awk '{print $1}')" 200
           
-          losetup "$FAKE_DEV" "$RUNNER_TEMP/dev0-backstore"
+          sudo losetup "$FAKE_DEV" "$RUNNER_TEMP/dev0-backstore"
 
       - name: Create BTRFS volume
         run: |
-          mkfs.btrfs $FAKE_DEV
-          mount $FAKE_DEV $TEST_VOL
+          sudo mkfs.btrfs $FAKE_DEV
+          mkdir $TEST_VOL
+          sudo mount $FAKE_DEV $TEST_VOL
 
       - name: Test
         run: |
