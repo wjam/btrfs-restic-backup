@@ -1,0 +1,12 @@
+[Unit]
+Description=Use Restic to backup a BTRFS subvolume
+# TODO want network
+# TODO want disk
+
+[Service]
+Type=oneshot
+
+# Allow the script to remount things as needed
+PrivateMounts=true
+
+ExecStart=/usr/local/bin/btrfs-restic-backup.sh

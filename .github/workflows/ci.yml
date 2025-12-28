@@ -15,10 +15,6 @@ jobs:
         with:
           persist-credentials: 'false'
 
-      - name: Test
-        run: |
-          ls -la ${{ github.workspace }}
-
       - name: Create virtual block device
         run: .github/create_block_device.sh "$RUNNER_TEMP/dev0-backstore" "$FAKE_DEV"
 
@@ -29,7 +25,26 @@ jobs:
         run: |
           echo "hello, world" | sudo tee "$TEST_SUBVOL/file.txt"
 
-      - name: Test
+# TODO
+#      - name: Install restic
+#        run: |
+#          sudo apt-get update && sudo apt-get install -y restic
+
+      - name: Set up systemd services
         run: |
-          ls -la $TEST_VOL
-          ls -la $TEST_SUBVOL
+          mkdir -p ~/.config/systemd/user
+          mkdir -p /usr/local/bin
+          cp systemd/*.service ~/.config/systemd/user
+          cp scripts/*.sh /usr/local/bin
+          
+          mkdir ~/.config/systemd/user/btrfs-restic-backup.service.d
+          cat > ~/.config/systemd/user/btrfs-restic-backup.service.d/env.conf<< EOF
+          [Service]
+          Environment="BTRFS_VOL=$TEST_VOL"
+          Environment="BTRFS_SUBVOL=$TEST_SUBVOL"
+          Environment="BTRFS_DEVICE=$FAKE_DEV"
+          Environment="BACKUP_PATHS=$TEST_SUBVOL"
+          EOF
+          
+      - name: Run unit to backup subvolume
+        run: .github/run_and_wait_for_unit_to_finish.sh btrfs-restic-backup.service
