@@ -27,7 +27,7 @@ jobs:
 
       - name: Add testdata to the subvolume
         run: |
-          echo "hello, world" > $TEST_SUBVOL/file.txt
+          echo "hello, world" | sudo tee "$TEST_SUBVOL/file.txt"
 
       - name: Test
         run: |
