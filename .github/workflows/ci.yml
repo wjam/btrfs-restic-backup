@@ -17,7 +17,7 @@ jobs:
 
       - name: Test
         run: |
-          ls -l ${{ github.workspace }}
+          ls -la ${{ github.workspace }}
 
       - name: Create virtual block device
         run: .github/create_block_device.sh "$RUNNER_TEMP/dev0-backstore" "$FAKE_DEV"
@@ -31,5 +31,5 @@ jobs:
 
       - name: Test
         run: |
-          ls -l $TEST_VOL
-          ls -l $TEST_SUBVOL
+          ls -la $TEST_VOL
+          ls -la $TEST_SUBVOL
