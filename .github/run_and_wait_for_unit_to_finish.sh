@@ -16,6 +16,9 @@ fi
 unit=${1:?Unit name required}
 
 systemctl --user daemon-reload
+
+trap 'journalctl --user -xeu $unit' EXIT
+
 systemctl --user start "$unit"
 
 sleep 5
