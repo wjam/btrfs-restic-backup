@@ -31,7 +31,7 @@ sudo btrfs subvolume snapshot -r "$subvolume" "$snapshot"
 trap 'sudo btrfs subvolume delete $snapshot' EXIT
 
 echo "Replacing subvolume with snapshot"
-sudo umount --verbose "$subvolume"
+sudo umount --verbose "$subvolume" 2>&1
 
 # TODO
 ls -l "$subvolume"
