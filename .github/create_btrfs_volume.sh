@@ -20,4 +20,4 @@ sub_vol=${3:?subvolume path required}
 sudo mkfs.btrfs "$dev_device"
 mkdir "$vol"
 sudo mount "$dev_device" "$vol"
-btrfs subvolume create "$sub_vol"
+sudo btrfs subvolume create "$sub_vol"
