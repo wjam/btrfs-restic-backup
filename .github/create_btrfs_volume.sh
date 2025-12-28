@@ -9,11 +9,11 @@ set -o nounset
 # Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump |gzip`
 set -o pipefail
 # Turn on traces, useful while debugging but commented out by default
-set -o xtrace
+#set -o xtrace
 
 dev_device=${1:?/dev device required}
 vol=${2:?volume path required}
-sub_vol=${2:?subvolume path required}
+sub_vol=${3:?subvolume path required}
 
 sudo mkfs.btrfs "$dev_device"
 mkdir "$vol"
