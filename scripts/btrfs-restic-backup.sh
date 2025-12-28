@@ -25,9 +25,12 @@ if sudo btrfs subvolume delete "$snapshot"; then
   echo "WARNING: previous run did not cleanly finish, removed old snapshot"
 fi
 
+echo "Creating snapshot"
+
 sudo btrfs subvolume snapshot -r "$subvolume" "$snapshot"
 trap 'sudo btrfs subvolume delete $snapshot' EXIT
 
+echo "Replacing subvolume with snapshot"
 sudo umount "$subvolume"
 
 # TODO
