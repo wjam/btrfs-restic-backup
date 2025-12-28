@@ -21,19 +21,19 @@ subvolume="$BTRFS_SUBVOL"
 btrfs_dev="$BTRFS_DEVICE"
 
 # clean old snapshot
-if btrfs subvolume delete "$snapshot"; then
+if sudo btrfs subvolume delete "$snapshot"; then
   echo "WARNING: previous run did not cleanly finish, removed old snapshot"
 fi
 
-btrfs subvolume snapshot -r "$subvolume" "$snapshot"
-trap 'btrfs subvolume delete $snapshot' EXIT
+sudo btrfs subvolume snapshot -r "$subvolume" "$snapshot"
+trap 'sudo btrfs subvolume delete $snapshot' EXIT
 
-umount "$subvolume"
+sudo umount "$subvolume"
 
 # TODO
 ls -l "$subvolume"
 
-mount --types btrfs --options "subvol=$snapshot_name" "$btrfs_dev" "$subvolume"
+sudo mount --types btrfs --options "subvol=$snapshot_name" "$btrfs_dev" "$subvolume"
 
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 #resitc ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}
