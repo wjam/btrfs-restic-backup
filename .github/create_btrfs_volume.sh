@@ -9,7 +9,9 @@ set -o nounset
 # Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump |gzip`
 set -o pipefail
 # Turn on traces, useful while debugging but commented out by default
-#set -o xtrace
+if [[ -n "${RUNNER_DEBUG:-}" ]]; then
+  set -o xtrace
+fi
 
 dev_device=${1:?/dev device required}
 vol=${2:?volume path required}
