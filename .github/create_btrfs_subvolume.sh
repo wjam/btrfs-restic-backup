@@ -14,8 +14,10 @@ if [[ -n "${RUNNER_DEBUG:-}" ]]; then
 fi
 
 dev_device=${1:?/dev device required}
-vol=${2:?volume path required}
+root_vol=${2:?root volume path required}
+sub_vol=${3:?subvolume name required}
+sub_vol_mount=${4:?subvolume mount path required}
 
-sudo mkfs.btrfs "$dev_device"
-mkdir "$vol"
-sudo mount "$dev_device" "$vol"
+sudo btrfs subvolume create "$root_vol/$sub_vol"
+mkdir "$sub_vol_mount"
+sudo mount --types btrfs --options "subvol=/$sub_vol" "$dev_device" "$sub_vol_mount"

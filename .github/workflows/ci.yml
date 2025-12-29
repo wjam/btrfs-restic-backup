@@ -7,8 +7,9 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       FAKE_DEV: /dev/fake-dev0
-      TEST_VOL: ${{ github.workspace }}/.vol
-      TEST_SUBVOL: ${{ github.workspace }}/.vol/test
+      TEST_VOL: ${{ github.workspace }}/.root
+      TEST_SUBVOL: ${{ github.workspace }}/.subvol
+      TEST_SUBVOL_NAME: ".subvol"
     steps:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -19,7 +20,10 @@ jobs:
         run: .github/create_block_device.sh "$RUNNER_TEMP/dev0-backstore" "$FAKE_DEV"
 
       - name: Create BTRFS volume
-        run: .github/create_btrfs_volume.sh "$FAKE_DEV" "$TEST_VOL" "$TEST_SUBVOL"
+        run: .github/create_btrfs_volume.sh "$FAKE_DEV" "$TEST_VOL"
+
+      - name: Create BTRFS subvolume
+        run: .github/create_btrfs_subvolume.sh "$FAKE_DEV" "$TEST_VOL" "$TEST_SUBVOL" "$TEST_SUBVOL_NAME"
 
       - name: Add testdata to the subvolume
         run: |

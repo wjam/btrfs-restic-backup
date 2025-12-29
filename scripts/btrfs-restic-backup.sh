@@ -27,11 +27,20 @@ fi
 
 echo "Creating snapshot"
 
+# TODO need to fix needing everything to be sudoed to work:
+# Able to get the mount to be owned by the current user?
+# Put the systemd files into /usr/local/lib/systemd/system/?
+# Prefix the ExecStart with /usr/bin/sudo using override?
+
 sudo btrfs subvolume snapshot -r "$subvolume" "$snapshot"
 trap 'sudo btrfs subvolume delete $snapshot' EXIT
 
 echo "Replacing subvolume with snapshot"
 sudo umount --verbose "$subvolume" 2>&1
+# TODO line above doesn't work as it isn't a subvolume
+# use a chroot jail? What paths are safe to copy over to the jail?
+# change the server to mount the 'real' volume at /mnt/raid and mount the subvolume at /usr/local/etc/house with the `subvol` option
+# https://github.com/restic/restic/issues/2714
 
 # TODO
 ls -l "$subvolume"
