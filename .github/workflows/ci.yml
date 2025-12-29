@@ -29,10 +29,9 @@ jobs:
         run: |
           echo "hello, world" | sudo tee "$TEST_SUBVOL/file.txt"
 
-# TODO
-#      - name: Install restic
-#        run: |
-#          sudo apt-get update && sudo apt-get install -y restic
+      - name: Install restic
+        run: |
+          sudo apt-get update && sudo apt-get install -y restic
 
       - name: Set up systemd services
         run: |

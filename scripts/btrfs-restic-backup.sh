@@ -12,7 +12,13 @@ set -o pipefail
 set -o xtrace
 # TODO disable xtrace
 
-snapshot_name="@restic-snapshot"
+# TODO split this script up?
+#  - ExecStartPre which creates the snapshot
+#  - ExecStart which performs the backup
+#  - ExecStartPost which deletes the completed snapshot? (would only be run on success of backup though)
+
+# TODO better name for this snapshot? From systemd unit name?
+snapshot_name="@btrfs-restic-backup"
 
 # TODO can we get the BTRFS_VOL from the BTRFS_SUBVOL?
 snapshot="$BTRFS_VOL/$snapshot_name"
@@ -37,10 +43,6 @@ trap 'sudo btrfs subvolume delete $snapshot' EXIT
 
 echo "Replacing subvolume with snapshot"
 sudo umount --verbose "$subvolume" 2>&1
-# TODO line above doesn't work as it isn't a subvolume
-# use a chroot jail? What paths are safe to copy over to the jail?
-# change the server to mount the 'real' volume at /mnt/raid and mount the subvolume at /usr/local/etc/house with the `subvol` option
-# https://github.com/restic/restic/issues/2714
 
 # TODO
 ls -l "$subvolume"
