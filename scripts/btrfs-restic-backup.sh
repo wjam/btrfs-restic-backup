@@ -16,6 +16,9 @@ set -o xtrace
 #  - ExecStartPre which creates the snapshot
 #  - ExecStart which performs the backup
 #  - ExecStartPost which deletes the completed snapshot? (would only be run on success of backup though)
+# Splitting up would allow _another_ ExecStartPre to be added which injects another file into the subvolume & lists the contents to prove the files backed up are the snapshot
+# https://unix.stackexchange.com/questions/348450/confused-by-execstartpre-entries-in-systemd-unit-file
+# As the service is a `oneshot`, multiple ExecStart could be added to the unit via `.d` directory backing up to many locations
 
 # TODO better name for this snapshot? From systemd unit name?
 snapshot_name="@btrfs-restic-backup"
@@ -37,6 +40,7 @@ echo "Creating snapshot"
 # Able to get the mount to be owned by the current user?
 # Put the systemd files into /usr/local/lib/systemd/system/?
 # Prefix the ExecStart with /usr/bin/sudo using override?
+# Rewrite the unit files to run this script with sudo?
 
 sudo btrfs subvolume snapshot -r "$subvolume" "$snapshot"
 trap 'sudo btrfs subvolume delete $snapshot' EXIT

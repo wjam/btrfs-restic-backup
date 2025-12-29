@@ -10,3 +10,5 @@ Type=oneshot
 PrivateMounts=true
 
 ExecStart=/usr/local/bin/btrfs-restic-backup.sh
+# TODO Needed? Used?
+ExecStop=/usr/bin/echo hello
