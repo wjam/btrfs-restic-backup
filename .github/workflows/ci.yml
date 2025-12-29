@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       FAKE_DEV: /dev/fake-dev0
-      TEST_VOL: ${{ github.workspace }}/.root
+      ROOT_VOL: ${{ github.workspace }}/.root
       TEST_SUBVOL: ${{ github.workspace }}/.subvol
       TEST_SUBVOL_NAME: ".subvol"
     steps:
@@ -20,10 +20,10 @@ jobs:
         run: .github/create_block_device.sh "$RUNNER_TEMP/dev0-backstore" "$FAKE_DEV"
 
       - name: Create BTRFS volume
-        run: .github/create_btrfs_volume.sh "$FAKE_DEV" "$TEST_VOL"
+        run: .github/create_btrfs_volume.sh "$FAKE_DEV" "$ROOT_VOL"
 
       - name: Create BTRFS subvolume
-        run: .github/create_btrfs_subvolume.sh "$FAKE_DEV" "$TEST_VOL" "$TEST_SUBVOL" "$TEST_SUBVOL_NAME"
+        run: .github/create_btrfs_subvolume.sh "$FAKE_DEV" "$ROOT_VOL" "$TEST_SUBVOL_NAME" "$TEST_SUBVOL"
 
       - name: Add testdata to the subvolume
         run: |
@@ -44,7 +44,7 @@ jobs:
           mkdir ~/.config/systemd/user/btrfs-restic-backup.service.d
           cat > ~/.config/systemd/user/btrfs-restic-backup.service.d/env.conf<< EOF
           [Service]
-          Environment="BTRFS_VOL=$TEST_VOL"
+          Environment="BTRFS_VOL=$ROOT_VOL"
           Environment="BTRFS_SUBVOL=$TEST_SUBVOL"
           Environment="BTRFS_DEVICE=$FAKE_DEV"
           Environment="BACKUP_PATHS=$TEST_SUBVOL"
