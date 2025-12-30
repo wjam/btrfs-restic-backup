@@ -21,7 +21,7 @@ set -o xtrace
 # https://unix.stackexchange.com/questions/348450/confused-by-execstartpre-entries-in-systemd-unit-file
 # As the service is a `oneshot`, multiple ExecStart could be added to the unit via `.d` directory backing up to many locations
 
-# TODO better name for this snapshot? From systemd unit name?
+# TODO better name for this snapshot? From systemd unit name? '%N'
 snapshot_name="@btrfs-restic-backup"
 
 # TODO Given the subvolume path, can the btrfs volume & subvolume name be found?
@@ -35,25 +35,19 @@ subvolume="$BTRFS_SUBVOL"
 btrfs_dev="$BTRFS_DEVICE"
 
 # clean old snapshot
-if sudo btrfs subvolume delete "$snapshot"; then
+if btrfs subvolume delete "$snapshot"; then
   echo "WARNING: previous run did not cleanly finish, removed old snapshot"
 fi
 
 echo "Creating snapshot"
 
-# TODO need to fix needing everything to be sudoed to work:
-# Able to get the mount to be owned by the current user?
-# Put the systemd files into /usr/local/lib/systemd/system/?
-# Prefix the ExecStart with /usr/bin/sudo using override?
-# Rewrite the unit files to run this script with sudo?
-
-sudo btrfs subvolume snapshot -r "$subvolume" "$snapshot"
-trap 'sudo btrfs subvolume delete $snapshot' EXIT
+btrfs subvolume snapshot -r "$subvolume" "$snapshot"
+trap 'btrfs subvolume delete $snapshot' EXIT
 
 echo "Replacing subvolume with snapshot"
-sudo umount --verbose "$subvolume" 2>&1
+umount --verbose "$subvolume" 2>&1
 
-sudo mount --types btrfs --options "subvol=$snapshot_name" "$btrfs_dev" "$subvolume"
+mount --types btrfs --options "subvol=$snapshot_name" "$btrfs_dev" "$subvolume"
 
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 restic ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}

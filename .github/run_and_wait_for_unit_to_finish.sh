@@ -15,15 +15,15 @@ fi
 
 unit=${1:?Unit name required}
 
-systemctl --user daemon-reload
+sudo systemctl daemon-reload
 
 trap 'journalctl --user -xeu $unit' EXIT
 
-systemctl --user start "$unit"
+sudo systemctl start "$unit"
 
 sleep 5
 
-while systemctl is-active --user --quiet "$unit"; do
+while systemctl is-active --quiet "$unit"; do
   sleep 5
   echo "."
   journalctl --lines=20 -u "$unit"
