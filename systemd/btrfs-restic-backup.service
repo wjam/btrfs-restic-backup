@@ -11,7 +11,17 @@ PrivateMounts=true
 
 Environment="SNAPSHOT_NAME=@%N"
 
+# Splitting up would allow _another_ ExecStartPre to be added which injects another file into the subvolume & lists the contents to prove the files backed up are the snapshot
+# https://unix.stackexchange.com/questions/348450/confused-by-execstartpre-entries-in-systemd-unit-file
+# As the service is a `oneshot`, multiple ExecStart could be added to the unit via `.d` directory backing up to many locations
+
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
-ExecStart=/usr/local/bin/btrfs-restic-backup.sh
-ExecStartPost=/usr/bin/echo start-post
+ExecStart=/usr/bin/ls -l ${BACKUP_PATHS}
+# TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
+ExecStart=/usr/bin/restic ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}
+ExecStartPost=/usr/bin/restic ${RESTIC_CACHE:-} forget --prune --max-unused 5G --verbose \
+                            --keep-daily "${RETENTION_DAYS:-7}" \
+                            --keep-weekly "${RETENTION_WEEKS:-4}" \
+                            --keep-monthly "${RETENTION_MONTHS:-6}" \
+                            --keep-yearly "${RETENTION_YEARS:-0}"
 ExecStopPost=/usr/local/bin/btrfs-restic-delete-snapshot.sh
