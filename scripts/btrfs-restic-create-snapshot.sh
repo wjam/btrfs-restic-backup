@@ -12,15 +12,14 @@ set -o pipefail
 set -o xtrace
 # TODO disable xtrace
 
-# TODO Given the subvolume path, can the btrfs volume & subvolume name be found?
-# If so, when using PrivateTmp, the root can be mounted to /tmp/btrfs and actions performed there
-# thus avoiding the need for the root volume to be always mounted - something the flat layout says isn't needed
-
-# TODO can we get the BTRFS_VOL from the BTRFS_SUBVOL?
-snapshot="$BTRFS_VOL/$SNAPSHOT_NAME"
 subvolume="$BTRFS_SUBVOL"
-# TODO lookup device?
-btrfs_dev="$BTRFS_DEVICE"
+
+btrfs_dev="$(findmnt --types btrfs --options subvol --target "$subvolume" --nofsroot --output source --noheadings)"
+
+btrfs_vol="$(mktemp -d)"
+mount "$btrfs_dev" "$btrfs_vol"
+
+snapshot="$btrfs_vol/$SNAPSHOT_NAME"
 
 # clean old snapshot
 if btrfs subvolume delete "$snapshot"; then

@@ -8,6 +8,9 @@ Type=oneshot
 
 # Allow the script to remount things as needed
 PrivateMounts=true
+# Script mounts the BTRFS device under /tmp, as the root device may not be mounted anywhere
+# and access is needed to create snapshots
+PrivateTmp=true
 
 # Systemd will create a directory for the restic cache
 CacheDirectory=%N

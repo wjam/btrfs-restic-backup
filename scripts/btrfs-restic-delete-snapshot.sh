@@ -12,7 +12,9 @@ set -o pipefail
 set -o xtrace
 # TODO disable xtrace
 
-# TODO can we get the BTRFS_VOL from the BTRFS_SUBVOL?
-snapshot="$BTRFS_VOL/$SNAPSHOT_NAME"
+btrfs_dev="$(findmnt --types btrfs --options subvol --target "$BTRFS_SUBVOL" --nofsroot --output source --noheadings)"
 
-btrfs subvolume delete "$snapshot"
+# The BTRFS volume was mounted either by administrator and/or the create snapshot script
+btrfs_vol="$(findmnt --types btrfs --options subvol --source "$btrfs_dev" --options subvol=/ --first-only --output target --noheadings)"
+
+btrfs subvolume delete "$btrfs_vol/$SNAPSHOT_NAME"

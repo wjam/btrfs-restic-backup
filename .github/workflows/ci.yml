@@ -52,9 +52,7 @@ jobs:
           sudo mkdir /usr/local/lib/systemd/system/btrfs-restic-backup.service.d
           sudo tee /usr/local/lib/systemd/system/btrfs-restic-backup.service.d/env.conf << EOF
           [Service]
-          Environment="BTRFS_VOL=$ROOT_VOL"
           Environment="BTRFS_SUBVOL=$TEST_SUBVOL"
-          Environment="BTRFS_DEVICE=$FAKE_DEV"
           Environment="BACKUP_PATHS=$TEST_SUBVOL"
           Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
