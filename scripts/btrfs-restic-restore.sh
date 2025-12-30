@@ -12,7 +12,7 @@ set -o pipefail
 set -o xtrace
 # TODO disable xtrace
 
-target=${1:?destination required}
+target=${1:-/}
 snapshot=${2:-latest}
 
 restic restore "$snapshot" --target "$target"

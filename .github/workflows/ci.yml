@@ -72,10 +72,14 @@ jobs:
         run: ls -l "$TEST_SUBVOL"
 
       - name: Restore from backup
-        run: scripts/btrfs-restic-restore.sh "$TEST_SUBVOL"
+        run: scripts/btrfs-restic-restore.sh
 
       # TODO
       - name: Test
         run: tree "$TEST_SUBVOL"
+
+      # TODO
+      - name: Test
+        run: cat "$TEST_SUBVOL/file.txt"
 
 # TODO verify contents of restored
