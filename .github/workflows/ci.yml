@@ -44,10 +44,10 @@ jobs:
 
       - name: Set up systemd services
         run: |
-          mkdir -p /usr/local/lib/systemd/system/
-          mkdir -p /usr/local/bin
-          cp systemd/*.service /usr/local/lib/systemd/system/
-          cp scripts/*.sh /usr/local/bin
+          sudo mkdir -p /usr/local/lib/systemd/system/
+          sudo mkdir -p /usr/local/bin
+          sudo cp systemd/*.service /usr/local/lib/systemd/system/
+          sudo cp scripts/*.sh /usr/local/bin
           
           sudo mkdir /usr/local/lib/systemd/system/btrfs-restic-backup.service.d
           sudo tee /usr/local/lib/systemd/system/btrfs-restic-backup.service.d/env.conf << EOF
