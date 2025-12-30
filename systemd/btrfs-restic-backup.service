@@ -9,12 +9,13 @@ Type=oneshot
 # Allow the script to remount things as needed
 PrivateMounts=true
 
+# Systemd will create a directory for the restic cache
 CacheDirectory=%N
 
 Environment="SNAPSHOT_NAME=@%N"
 
-#Environment="RESTIC_CACHE="
 #Environment="BACKUP_EXCLUDES="
+Environment="RETENTION_HOURS=2"
 Environment="RETENTION_DAYS=7"
 Environment="RETENTION_WEEKS=4"
 Environment="RETENTION_MONTHS=6"
@@ -25,18 +26,8 @@ Environment="RETENTION_YEARS=0"
 # As the service is a `oneshot`, multiple ExecStart could be added to the unit via `.d` directory backing up to many locations
 
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
-ExecStart=/usr/bin/ls -l ${BACKUP_PATHS}
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
-ExecStart=/usr/bin/env
-ExecStart=/usr/bin/echo --cache-dir $CACHE_DIRECTORY backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
 ExecStart=/usr/bin/restic --cache-dir $CACHE_DIRECTORY backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
-ExecStart=/usr/bin/restic snapshots
-ExecStart=/usr/bin/tree $RESTIC_REPOSITORY
-ExecStartPost=/usr/bin/restic snapshots
-ExecStartPost=/usr/bin/echo "days-${RETENTION_DAYS}" "weeks-${RETENTION_WEEKS}" "months-${RETENTION_MONTHS}" "years-${RETENTION_YEARS}"
-# TODO --keep-hourly
-ExecStartPost=/usr/bin/restic --cache-dir $CACHE_DIRECTORY forget --dry-run --prune --max-unused 5G --verbose --keep-hourly 2 --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
-#ExecStartPost=/usr/bin/restic --cache-dir $CACHE_DIRECTORY forget --prune --max-unused 5G --verbose --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
-ExecStartPost=/usr/bin/tree ${RESTIC_REPOSITORY}
+ExecStartPost=/usr/bin/restic --cache-dir $CACHE_DIRECTORY forget --prune --max-unused 5G --verbose --keep-hourly ${RETENTION_HOURS} --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
 ExecStopPost=/usr/local/bin/btrfs-restic-delete-snapshot.sh
 
