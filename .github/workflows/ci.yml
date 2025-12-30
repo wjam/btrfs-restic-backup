@@ -30,8 +30,7 @@ jobs:
         run: .github/create_btrfs_subvolume.sh "$FAKE_DEV" "$ROOT_VOL" "$TEST_SUBVOL_NAME" "$TEST_SUBVOL"
 
       - name: Add testdata to the subvolume
-        run: |
-          echo -n "$CONTENT" | sudo tee "$TEST_SUBVOL/file.txt"
+        run: sudo .github/output_content_to_file.sh "$CONTENT" "$TEST_SUBVOL/file.txt"
 
       - name: Install restic
         run: |
@@ -56,7 +55,7 @@ jobs:
           Environment="BACKUP_PATHS=$TEST_SUBVOL"
           Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
-          ExecStartPre=/usr/bin/echo -n foo | tee $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
+          ExecStartPre=${{ github.workspace}}/.github/output_content_to_file.sh foo $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
           EOF
           
       - name: Run unit to backup subvolume
