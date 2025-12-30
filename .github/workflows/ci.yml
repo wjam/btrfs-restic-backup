@@ -76,6 +76,6 @@ jobs:
 
       # TODO
       - name: Test
-        run: ls -l "$TEST_SUBVOL"
+        run: tree "$TEST_SUBVOL"
 
 # TODO verify contents of restored
