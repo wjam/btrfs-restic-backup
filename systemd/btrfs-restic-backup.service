@@ -9,6 +9,8 @@ Type=oneshot
 # Allow the script to remount things as needed
 PrivateMounts=true
 
+Environment="SNAPSHOT_NAME=@%N"
+
 ExecStart=/usr/local/bin/btrfs-restic-backup.sh
 # TODO Needed? Used?
 ExecStopPost=/usr/bin/echo hello-from-post
