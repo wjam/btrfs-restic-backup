@@ -18,7 +18,7 @@ CacheDirectory=%N
 
 Environment="SNAPSHOT_NAME=@%N"
 
-#Environment="BACKUP_EXCLUDES="
+Environment="BACKUP_EXCLUDES="
 Environment="RETENTION_HOURS=2"
 Environment="RETENTION_DAYS=7"
 Environment="RETENTION_WEEKS=4"
@@ -29,7 +29,7 @@ Environment="RETENTION_YEARS=0"
 #      but this would mean not being able to test that a backup is taken of the snapshot...
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
-ExecStart=/usr/local/bin/btrfs-restic-backup.sh --cache-dir $CACHE_DIRECTORY backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
+ExecStart=/usr/local/bin/btrfs-restic-backup.sh --cache-dir $CACHE_DIRECTORY --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
 ExecStartPost=/usr/bin/restic --cache-dir $CACHE_DIRECTORY forget --prune --max-unused 5G --verbose --keep-hourly ${RETENTION_HOURS} --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
 ExecStopPost=/usr/local/bin/btrfs-restic-delete-snapshot.sh
 

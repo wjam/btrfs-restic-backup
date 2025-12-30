@@ -21,4 +21,4 @@ umount --verbose "$subvolume" 2>&1
 
 mount --types btrfs --options "subvol=$SNAPSHOT_NAME" "$btrfs_dev" "$subvolume"
 
-restic "$@"
+restic backup "$@"
