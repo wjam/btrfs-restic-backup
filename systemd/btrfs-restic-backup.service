@@ -11,6 +11,7 @@ PrivateMounts=true
 
 Environment="SNAPSHOT_NAME=@%N"
 
+ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
 ExecStart=/usr/local/bin/btrfs-restic-backup.sh
-# TODO Needed? Used?
-ExecStopPost=/usr/bin/echo hello-from-post
+ExecStartPost=/usr/bin/echo start-post
+ExecStopPost=/usr/local/bin/btrfs-restic-delete-snapshot.sh
