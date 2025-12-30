@@ -27,7 +27,7 @@ Environment="RETENTION_YEARS=0"
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
 ExecStart=/usr/bin/ls -l ${BACKUP_PATHS}
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
-ExecStart=/usr/bin/echo $CACHE_DIRECTORY
+ExecStart=/usr/bin/env
 ExecStart=/usr/bin/echo ${RESTIC_CACHE} backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
 ExecStart=/usr/bin/restic ${RESTIC_CACHE} backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
 ExecStart=/usr/bin/restic snapshots
