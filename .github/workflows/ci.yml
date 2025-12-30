@@ -65,6 +65,10 @@ jobs:
       - name: Verify backed up contents
         run: .github/verify_backed_up_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
 
+# TODO
+      - name: Verify existing contents
+        run: .github/verify_content.sh "$ROOT_VOL/$TEST_SUBVOL_NAME/file.txt" "foo"
+
       - name: Verify existing contents
         run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "foo"
 
