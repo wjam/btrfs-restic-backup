@@ -1,5 +1,6 @@
 [Unit]
 Description=Use Restic to backup a BTRFS subvolume
+Requires=network-online.target
 # TODO want network
 # TODO want disk
 
@@ -24,6 +25,8 @@ Environment="RETENTION_WEEKS=4"
 Environment="RETENTION_MONTHS=6"
 Environment="RETENTION_YEARS=0"
 
+# TODO if this was an ExecStart instead, then monitoring for this service could use a ExecStartPre to send a 'starting' call
+#      but this would mean not being able to test that a backup is taken of the snapshot...
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 ExecStart=/usr/local/bin/btrfs-restic-backup.sh --cache-dir $CACHE_DIRECTORY backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}

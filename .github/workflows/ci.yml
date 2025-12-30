@@ -57,6 +57,7 @@ jobs:
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
           # alter content of test file to verify the snapshot is being backed up
           ExecStartPre=${{ github.workspace}}/.github/output_content_to_file.sh foo $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
+          ExecStart=/usr/bin/echo visual-confirmation-that-this-happens-after-exec-start-in-main-service
           EOF
           
       - name: Run unit to backup subvolume
