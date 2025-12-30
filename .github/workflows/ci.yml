@@ -56,6 +56,8 @@ jobs:
           Environment="BACKUP_PATHS=$TEST_SUBVOL"
           Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
+          ExecStartPre=/usr/bin/echo here
+          ExecStartPre=/usr/bin/echo foo > $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
           EOF
           
       - name: Run unit to backup subvolume
