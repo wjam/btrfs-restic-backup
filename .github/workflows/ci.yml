@@ -10,6 +10,8 @@ jobs:
       ROOT_VOL: ${{ github.workspace }}/test/root
       TEST_SUBVOL: ${{ github.workspace }}/test/subvol
       TEST_SUBVOL_NAME: ".subvol"
+      CONTENT: "hello, world"
+
       RESTIC_REPOSITORY: ${{ github.workspace }}/test/backup
       RESTIC_PASSWORD: secure-password
     steps:
@@ -29,7 +31,7 @@ jobs:
 
       - name: Add testdata to the subvolume
         run: |
-          echo -n "hello, world" | sudo tee "$TEST_SUBVOL/file.txt"
+          echo -n "$CONTENT" | sudo tee "$TEST_SUBVOL/file.txt"
 
       - name: Install restic
         run: |
@@ -62,24 +64,13 @@ jobs:
         run: .github/run_and_wait_for_unit_to_finish.sh btrfs-restic-backup.service
 
       - name: Verify backed up contents
-        run: .github/verify_backed_up_content.sh "$TEST_SUBVOL/file.txt" "hello, world"
+        run: .github/verify_backed_up_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
 
       - name: Delete subvolume including test data
         run: .github/delete_btrfs_subvolume.sh "$ROOT_VOL" "$TEST_SUBVOL_NAME" "$TEST_SUBVOL"
 
-      # TODO
-      - name: Test
-        run: ls -l "$TEST_SUBVOL"
-
       - name: Restore from backup
         run: scripts/btrfs-restic-restore.sh
 
-      # TODO
-      - name: Test
-        run: tree "$TEST_SUBVOL"
-
-      # TODO
-      - name: Test
-        run: cat "$TEST_SUBVOL/file.txt"
-
-# TODO verify contents of restored
+      - name: Verify backed up contents
+        run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"

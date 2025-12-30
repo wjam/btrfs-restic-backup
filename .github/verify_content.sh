@@ -9,10 +9,18 @@ set -o nounset
 # Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump |gzip`
 set -o pipefail
 # Turn on traces, useful while debugging but commented out by default
-set -o xtrace
-# TODO disable xtrace
+if [[ -n "${RUNNER_DEBUG:-}" ]]; then
+  set -o xtrace
+fi
 
-target=${1:-/}
-snapshot=${2:-latest}
+path=${1:?/path required}
+expected=${2:?expected content required}
 
-restic ${RESTIC_CACHE:-} restore "$snapshot" --target "$target"
+actual="$(cat "$path")"
+
+if [ "$actual" == "$expected" ]; then
+  exit 0
+fi
+
+echo "expected '$expected', got '$actual'"
+exit 1

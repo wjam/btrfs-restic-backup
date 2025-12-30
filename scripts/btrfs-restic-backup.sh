@@ -52,16 +52,9 @@ trap 'sudo btrfs subvolume delete $snapshot' EXIT
 echo "Replacing subvolume with snapshot"
 sudo umount --verbose "$subvolume" 2>&1
 
-# TODO
-ls -l "$subvolume"
-
 sudo mount --types btrfs --options "subvol=$snapshot_name" "$btrfs_dev" "$subvolume"
 
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 restic ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}
 
 # TODO trim off any unwanted backups
-
-# TODO
-ls -l "$subvolume"
-ls -l "$RESTIC_REPOSITORY"
