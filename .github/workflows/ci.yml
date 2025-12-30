@@ -49,8 +49,8 @@ jobs:
           cp systemd/*.service /usr/local/lib/systemd/system/
           cp scripts/*.sh /usr/local/bin
           
-          mkdir /usr/local/lib/systemd/system/btrfs-restic-backup.service.d
-          cat > /usr/local/lib/systemd/system/btrfs-restic-backup.service.d/env.conf<< EOF
+          sudo mkdir /usr/local/lib/systemd/system/btrfs-restic-backup.service.d
+          sudo tee /usr/local/lib/systemd/system/btrfs-restic-backup.service.d/env.conf << EOF
           [Service]
           Environment="BTRFS_VOL=$ROOT_VOL"
           Environment="BTRFS_SUBVOL=$TEST_SUBVOL"
