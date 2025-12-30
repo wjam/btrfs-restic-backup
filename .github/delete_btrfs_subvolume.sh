@@ -13,9 +13,9 @@ if [[ -n "${RUNNER_DEBUG:-}" ]]; then
   set -o xtrace
 fi
 
-root_vol=${2:?root volume path required}
-sub_vol=${3:?subvolume name required}
-sub_vol_mount=${4:?subvolume mount path required}
+root_vol=${1:?root volume path required}
+sub_vol=${2:?subvolume name required}
+sub_vol_mount=${3:?subvolume mount path required}
 
 sudo umount "$sub_vol_mount"
 sudo btrfs subvolume delete "$root_vol/$sub_vol"
