@@ -63,10 +63,6 @@ jobs:
       - name: Run unit to backup subvolume
         run: .github/run_and_wait_for_unit_to_finish.sh btrfs-restic-backup.service
 
-# TODO
-      - name: temp
-        run: sudo tree $RESTIC_REPOSITORY
-
       - name: Verify backed up contents
         run: .github/verify_backed_up_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
 
