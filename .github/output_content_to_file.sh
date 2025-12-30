@@ -13,4 +13,7 @@ if [[ -n "${RUNNER_DEBUG:-}" ]]; then
   set -o xtrace
 fi
 
+echo "Setting file $2 to $1"
 echo -n "$1" > "$2"
+
+cat $2
