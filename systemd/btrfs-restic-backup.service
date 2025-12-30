@@ -9,7 +9,7 @@ Type=oneshot
 # Allow the script to remount things as needed
 PrivateMounts=true
 
-CacheDirectory=
+CacheDirectory=%N
 
 Environment="SNAPSHOT_NAME=@%N"
 
