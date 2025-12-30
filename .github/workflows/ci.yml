@@ -64,7 +64,18 @@ jobs:
       - name: Verify backed up contents
         run: .github/verify_backed_up_content.sh "$TEST_SUBVOL/file.txt" "hello, world"
 
-# TODO unmount & delete subvolume
-# TODO create restore script
-# TODO run restore - doesn't matter that its not a btrfs volume
+      - name: Delete subvolume including test data
+        run: .github/delete_btrfs_subvolume.sh "$ROOT_VOL" "$TEST_SUBVOL_NAME" "$TEST_SUBVOL"
+
+      # TODO
+      - name: Test
+        run: ls -l "$TEST_SUBVOL"
+
+      - name: Restore from backup
+        run: scripts/btrfs-restic-restore.sh "$TEST_SUBVOL"
+
+      # TODO
+      - name: Test
+        run: ls -l "$TEST_SUBVOL"
+
 # TODO verify contents of restored
