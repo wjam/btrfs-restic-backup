@@ -34,3 +34,6 @@ echo "Replacing subvolume with snapshot"
 umount --verbose "$subvolume" 2>&1
 
 mount --types btrfs --options "subvol=$SNAPSHOT_NAME" "$btrfs_dev" "$subvolume"
+
+# TODO
+findmnt --types btrfs --options subvol --target $subvolume
