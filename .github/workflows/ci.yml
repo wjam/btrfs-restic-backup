@@ -70,7 +70,7 @@ jobs:
         run: .github/delete_btrfs_subvolume.sh "$ROOT_VOL" "$TEST_SUBVOL_NAME" "$TEST_SUBVOL"
 
       - name: Restore from backup
-        run: scripts/btrfs-restic-restore.sh
+        run: sudo scripts/btrfs-restic-restore.sh
 
       - name: Verify backed up contents
         run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"

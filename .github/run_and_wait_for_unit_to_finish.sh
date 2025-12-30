@@ -17,7 +17,7 @@ unit=${1:?Unit name required}
 
 sudo systemctl daemon-reload
 
-trap 'journalctl --user -xeu $unit' EXIT
+trap 'journalctl -xeu $unit' EXIT
 
 sudo systemctl start "$unit"
 

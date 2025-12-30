@@ -16,7 +16,7 @@ fi
 path=${1:?/backed up path required}
 expected=${2:?expected content required}
 
-actual="$(restic dump latest "$path")"
+actual="$(sudo restic dump latest "$path")"
 
 if [ "$actual" == "$expected" ]; then
   exit 0
