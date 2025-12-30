@@ -26,5 +26,7 @@ ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
 ExecStart=/usr/bin/ls -l ${BACKUP_PATHS}
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 ExecStart=/usr/bin/restic ${RESTIC_CACHE} backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
+ExecStart=/usr/bin/tree $RESTIC_REPOSITORY
 ExecStartPost=/usr/bin/restic ${RESTIC_CACHE} forget --prune --max-unused 5G --verbose --keep-daily "${RETENTION_DAYS}" --keep-weekly "${RETENTION_WEEKS}" --keep-monthly "${RETENTION_MONTHS}" --keep-yearly "${RETENTION_YEARS}"
+ExecStart=/usr/bin/tree ${RESTIC_REPOSITORY}
 ExecStopPost=/usr/local/bin/btrfs-restic-delete-snapshot.sh
