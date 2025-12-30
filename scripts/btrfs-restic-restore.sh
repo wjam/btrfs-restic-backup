@@ -13,6 +13,6 @@ set -o xtrace
 # TODO disable xtrace
 
 target=${1:?destination required}
-snapshot=${2:latest}
+snapshot=${2:-latest}
 
 restic restore "$snapshot" --target "$target"
