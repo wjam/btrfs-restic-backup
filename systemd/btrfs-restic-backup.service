@@ -24,10 +24,6 @@ Environment="RETENTION_WEEKS=4"
 Environment="RETENTION_MONTHS=6"
 Environment="RETENTION_YEARS=0"
 
-# Splitting up would allow _another_ ExecStartPre to be added which injects another file into the subvolume & lists the contents to prove the files backed up are the snapshot
-# https://unix.stackexchange.com/questions/348450/confused-by-execstartpre-entries-in-systemd-unit-file
-# As the service is a `oneshot`, multiple ExecStart could be added to the unit via `.d` directory backing up to many locations
-
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 ExecStart=/usr/local/bin/btrfs-restic-backup.sh --cache-dir $CACHE_DIRECTORY backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
