@@ -60,6 +60,8 @@ sudo mount --types btrfs --options "subvol=$snapshot_name" "$btrfs_dev" "$subvol
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 restic ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}
 
+# TODO trim off any unwanted backups
+
 # TODO
 ls -l "$subvolume"
 ls -l "$RESTIC_REPOSITORY"

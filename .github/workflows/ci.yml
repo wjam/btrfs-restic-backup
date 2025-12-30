@@ -29,7 +29,7 @@ jobs:
 
       - name: Add testdata to the subvolume
         run: |
-          echo "hello, world" | sudo tee "$TEST_SUBVOL/file.txt"
+          echo -n "hello, world" | sudo tee "$TEST_SUBVOL/file.txt"
 
       - name: Install restic
         run: |
@@ -60,3 +60,11 @@ jobs:
           
       - name: Run unit to backup subvolume
         run: .github/run_and_wait_for_unit_to_finish.sh btrfs-restic-backup.service
+
+      - name: Verify backed up contents
+        run: .github/verify_backed_up_content.sh "$TEST_SUBVOL/file.txt" "hello, world"
+
+# TODO unmount & delete subvolume
+# TODO create restore script
+# TODO run restore - doesn't matter that its not a btrfs volume
+# TODO verify contents of restored
