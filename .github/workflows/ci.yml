@@ -7,9 +7,11 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       FAKE_DEV: /dev/fake-dev0
-      ROOT_VOL: ${{ github.workspace }}/.root
-      TEST_SUBVOL: ${{ github.workspace }}/.subvol
+      ROOT_VOL: ${{ github.workspace }}/test/root
+      TEST_SUBVOL: ${{ github.workspace }}/test/subvol
       TEST_SUBVOL_NAME: ".subvol"
+      RESTIC_REPOSITORY: ${{ github.workspace }}/test/backup
+      RESTIC_PASSWORD: secure-password
     steps:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -33,6 +35,11 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y restic
 
+      - name: Initialise restic repo
+        # location & password come from the RESTIC_* environment variables
+        run: |
+          restic init
+
       - name: Set up systemd services
         run: |
           mkdir -p ~/.config/systemd/user
@@ -47,6 +54,8 @@ jobs:
           Environment="BTRFS_SUBVOL=$TEST_SUBVOL"
           Environment="BTRFS_DEVICE=$FAKE_DEV"
           Environment="BACKUP_PATHS=$TEST_SUBVOL"
+          Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
+          Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
           EOF
           
       - name: Run unit to backup subvolume

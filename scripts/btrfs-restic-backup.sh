@@ -23,6 +23,10 @@ set -o xtrace
 # TODO better name for this snapshot? From systemd unit name?
 snapshot_name="@btrfs-restic-backup"
 
+# TODO Given the subvolume path, can the btrfs volume & subvolume name be found?
+# If so, when using PrivateTmp, the root can be mounted to /tmp/btrfs and actions performed there
+# thus avoiding the need for the root volume to be always mounted - something the flat layout says isn't needed
+
 # TODO can we get the BTRFS_VOL from the BTRFS_SUBVOL?
 snapshot="$BTRFS_VOL/$snapshot_name"
 subvolume="$BTRFS_SUBVOL"
@@ -54,7 +58,8 @@ ls -l "$subvolume"
 sudo mount --types btrfs --options "subvol=$snapshot_name" "$btrfs_dev" "$subvolume"
 
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
-#resitc ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}
+resitc ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}
 
 # TODO
 ls -l "$subvolume"
+ls -l "$RESTIC_REPOSITORY"

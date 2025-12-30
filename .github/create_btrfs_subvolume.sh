@@ -19,5 +19,5 @@ sub_vol=${3:?subvolume name required}
 sub_vol_mount=${4:?subvolume mount path required}
 
 sudo btrfs subvolume create "$root_vol/$sub_vol"
-mkdir "$sub_vol_mount"
+mkdir -p "$sub_vol_mount"
 sudo mount --types btrfs --options "subvol=/$sub_vol" "$dev_device" "$sub_vol_mount"

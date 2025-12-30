@@ -17,5 +17,5 @@ dev_device=${1:?/dev device required}
 vol=${2:?volume path required}
 
 sudo mkfs.btrfs "$dev_device"
-mkdir "$vol"
+mkdir -p "$vol"
 sudo mount "$dev_device" "$vol"
