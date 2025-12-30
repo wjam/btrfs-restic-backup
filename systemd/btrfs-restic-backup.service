@@ -28,14 +28,15 @@ ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
 ExecStart=/usr/bin/ls -l ${BACKUP_PATHS}
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 ExecStart=/usr/bin/env
-ExecStart=/usr/bin/echo ${RESTIC_CACHE} backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
-ExecStart=/usr/bin/restic ${RESTIC_CACHE} backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
+ExecStart=/usr/bin/echo --cache-dir $CACHE_DIRECTORY backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
+ExecStart=/usr/bin/restic --cache-dir $CACHE_DIRECTORY backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
 ExecStart=/usr/bin/restic snapshots
 ExecStart=/usr/bin/tree $RESTIC_REPOSITORY
 ExecStartPost=/usr/bin/restic snapshots
-ExecStartPost=/usr/bin/echo cache-${RESTIC_CACHE} "days-${RETENTION_DAYS}" "weeks-${RETENTION_WEEKS}" "months-${RETENTION_MONTHS}" "years-${RETENTION_YEARS}"
-ExecStartPost=/usr/bin/restic ${RESTIC_CACHE} forget --dry-run --prune --max-unused 5G --verbose --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
-#ExecStartPost=/usr/bin/restic ${RESTIC_CACHE} forget --prune --max-unused 5G --verbose --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
+ExecStartPost=/usr/bin/echo "days-${RETENTION_DAYS}" "weeks-${RETENTION_WEEKS}" "months-${RETENTION_MONTHS}" "years-${RETENTION_YEARS}"
+# TODO --keep-hourly
+ExecStartPost=/usr/bin/restic --cache-dir $CACHE_DIRECTORY forget --dry-run --prune --max-unused 5G --verbose --keep-hourly 2 --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
+#ExecStartPost=/usr/bin/restic --cache-dir $CACHE_DIRECTORY forget --prune --max-unused 5G --verbose --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
 ExecStartPost=/usr/bin/tree ${RESTIC_REPOSITORY}
 ExecStopPost=/usr/local/bin/btrfs-restic-delete-snapshot.sh
 
