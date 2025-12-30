@@ -28,7 +28,7 @@ Environment="RETENTION_YEARS=0"
 # https://unix.stackexchange.com/questions/348450/confused-by-execstartpre-entries-in-systemd-unit-file
 # As the service is a `oneshot`, multiple ExecStart could be added to the unit via `.d` directory backing up to many locations
 
-ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
+ExecStart=/usr/local/bin/btrfs-restic-create-snapshot.sh
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
 ExecStart=/usr/bin/restic --cache-dir $CACHE_DIRECTORY backup --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
 ExecStartPost=/usr/bin/restic --cache-dir $CACHE_DIRECTORY forget --prune --max-unused 5G --verbose --keep-hourly ${RETENTION_HOURS} --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
