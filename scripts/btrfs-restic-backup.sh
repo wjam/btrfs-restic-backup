@@ -58,7 +58,7 @@ ls -l "$subvolume"
 sudo mount --types btrfs --options "subvol=$snapshot_name" "$btrfs_dev" "$subvolume"
 
 # TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
-resitc ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}
+restic ${RESTIC_CACHE:-} backup --verbose --one-file-system ${BACKUP_EXCLUDES:-} ${BACKUP_PATHS}
 
 # TODO
 ls -l "$subvolume"
