@@ -56,8 +56,7 @@ jobs:
           Environment="BACKUP_PATHS=$TEST_SUBVOL"
           Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
-          ExecStartPre=/usr/bin/echo here
-          ExecStartPre=/usr/bin/echo foo > $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
+          ExecStartPre=/usr/bin/echo -n foo > $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
           EOF
           
       - name: Run unit to backup subvolume
@@ -66,11 +65,14 @@ jobs:
       - name: Verify backed up contents
         run: .github/verify_backed_up_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
 
+      - name: Verify existing contents
+        run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "foo"
+
       - name: Delete subvolume including test data
         run: .github/delete_btrfs_subvolume.sh "$ROOT_VOL" "$TEST_SUBVOL_NAME" "$TEST_SUBVOL"
 
       - name: Restore from backup
         run: sudo --preserve-env scripts/btrfs-restic-restore.sh
 
-      - name: Verify backed up contents
+      - name: Verify restored contents
         run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
