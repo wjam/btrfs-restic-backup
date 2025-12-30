@@ -56,7 +56,6 @@ jobs:
           Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
           ExecStartPre=${{ github.workspace}}/.github/output_content_to_file.sh foo $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
-          ExecStart=/usr/bin/findmnt --types btrfs --options subvol --target $TEST_SUBVOL
           ExecStartPost=cat $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
           EOF
           
