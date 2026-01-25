@@ -77,3 +77,6 @@ jobs:
 
       - name: Verify restored contents
         run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
+
+      - name: Check check was run
+        run: ls -l /var/lib/btrfs-restic-backup.service
