@@ -1,0 +1,8 @@
+[Unit]
+Description=Run Restic to backup a BTRFS subvolume
+Requires=%N.service
+
+[Timer]
+Unit=%N.service
+OnCalendar=daily
+Persistent=true
