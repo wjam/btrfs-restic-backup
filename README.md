@@ -1,13 +1,13 @@
 # btrfs-restic-backup
 
-A systemd-based tool to back up a BTRFS subvolume using restic.
+A systemd-based tool to back up a BTRFS subvolume using Restic.
 
 - [systemd](https://systemd.io/): because it's the Linux standard
 - [BTRFS](https://btrfs.readthedocs.io/): it's baked into Linux and allows creating snapshots of volumes to use as a basis for backing up
-- [restic](https://restic.net/): supports a large number of destinations
+- [Restic](https://restic.net/): supports a large number of destinations
 
 > [!NOTE]
-> This backup solution makes use of `PrivateMounts` so that the BTRFS mount can be replaced to work around [a `restic` issue](https://github.com/restic/restic/issues/2714). For this solution to work, BTRFS must be used in the ['flat' layout style](https://archive.kernel.org/oldwiki/btrfs.wiki.kernel.org/index.php/SysadminGuide.html#Flat).
+> This backup solution makes use of `PrivateMounts` so that the BTRFS mount can be replaced to work around [a Restic issue](https://github.com/restic/restic/issues/2714). For this solution to work, BTRFS must be used in the ['flat' layout style](https://archive.kernel.org/oldwiki/btrfs.wiki.kernel.org/index.php/SysadminGuide.html#Flat).
 
 This backup tool makes use of BTRFS snapshots to ensure the backup comes from a "consistent view" of the files. This means the backup can work both for 'normal' files, such as backing up music, as well as for databases:
 
@@ -40,7 +40,7 @@ From https://www.postgresql.org/docs/current/backup-file.html.
     Environment="RESTIC_REPOSITORY=sftp:user@host:/srv/restic-repo init"
     Environment="RESTIC_PASSWORD=the-password-for-the-repo"
     ```
-6. Initialise the new restic repository, assuming it is new
+6. Initialise the new Restic repository, assuming it is new
     ```shell
     restic init --repo sftp:user@host:/srv/restic-repo init
     ```
