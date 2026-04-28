@@ -2,6 +2,7 @@
 Description=Use Restic to backup a BTRFS subvolume
 Wants=%N.timer
 Requires=network-online.target
+After=network-online.target
 
 [Service]
 Type=oneshot

@@ -12,7 +12,6 @@ set -o nounset
 set -o pipefail
 # Turn on traces, useful while debugging but commented out by default
 #set -o xtrace
-# TODO disable xtrace
 
 target=${1:-/}
 snapshot=${2:-latest}

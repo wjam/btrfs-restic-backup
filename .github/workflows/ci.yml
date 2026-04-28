@@ -4,7 +4,7 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       FAKE_DEV: /dev/fake-dev0
       ROOT_VOL: ${{ github.workspace }}/test/root
@@ -59,7 +59,7 @@ jobs:
           ExecStartPre=${{ github.workspace}}/.github/output_content_to_file.sh foo $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
           ExecStart=/usr/bin/echo visual-confirmation-that-this-happens-after-exec-start-in-main-service
           EOF
-          
+
       - name: Run unit to backup subvolume
         run: .github/run_and_wait_for_unit_to_finish.sh btrfs-restic-backup.service
 
