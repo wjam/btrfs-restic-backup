@@ -5,6 +5,8 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     env:
       FAKE_DEV: /dev/fake-dev0
       ROOT_VOL: ${{ github.workspace }}/test/root
@@ -48,8 +50,8 @@ jobs:
           sudo cp systemd/*.service /usr/local/lib/systemd/system/
           sudo cp scripts/*.sh /usr/local/bin
           
-          sudo mkdir /usr/local/lib/systemd/system/btrfs-restic-backup.service.d
-          sudo tee /usr/local/lib/systemd/system/btrfs-restic-backup.service.d/env.conf << EOF
+          sudo mkdir /usr/local/lib/systemd/system/btrfs-restic-backup@test.service.d
+          sudo tee /usr/local/lib/systemd/system/btrfs-restic-backup@test.service.d/env.conf << EOF
           [Service]
           Environment="BTRFS_SUBVOL=$TEST_SUBVOL"
           Environment="BACKUP_PATHS=$TEST_SUBVOL"
@@ -61,7 +63,7 @@ jobs:
           EOF
 
       - name: Run unit to backup subvolume
-        run: .github/run_and_wait_for_unit_to_finish.sh btrfs-restic-backup.service
+        run: .github/run_and_wait_for_unit_to_finish.sh btrfs-restic-backup@test.service
 
       - name: Verify backed up contents
         run: .github/verify_backed_up_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"

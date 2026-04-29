@@ -18,9 +18,7 @@ From https://www.postgresql.org/docs/current/backup-file.html.
 ## Installation
 
 > [!TIP]
-> Given you want to keep to the [3-2-1 backup strategy](https://www.backblaze.com/blog/the-3-2-1-backup-strategy/), you probably want to deploy the units as [template unit files](https://fedoramagazine.org/systemd-template-unit-files/) so that the same files can be backed up to a secondary local location as well as remote.
-
-[//]: # (TODO: change services in this repo to be templates)
+> Given you want to keep to the [3-2-1 backup strategy](https://www.backblaze.com/blog/the-3-2-1-backup-strategy/), these units are [template unit files](https://fedoramagazine.org/systemd-template-unit-files/) so that backups can be run against multiple repository locations.
 
 1. Install `restic`
     ```shell
@@ -30,7 +28,7 @@ From https://www.postgresql.org/docs/current/backup-file.html.
 3. Copy [./systemd](./systemd) to `/usr/local/lib/systemd/system/`
 4. Create drop-in directories for configuration
     ```shell
-    sudo mkdir /usr/local/lib/systemd/system/btrfs-restic-backup.service.d
+    sudo mkdir /usr/local/lib/systemd/system/btrfs-restic-backup@NAME.service.d
     ```
 5. Populate drop-in file with specific configuration, such as:
     ```unit file (systemd)
@@ -47,13 +45,13 @@ From https://www.postgresql.org/docs/current/backup-file.html.
 7. Enable the new backup
     ```shell
     sudo systemctl daemon-reload
-    sudo systemctl enable btrfs-restic-backup.service
-    sudo systemctl enable btrfs-restic-backup.timer
-    sudo systemctl start btrfs-restic-backup.timer
+    sudo systemctl enable btrfs-restic-backup@NAME.service
+    sudo systemctl enable btrfs-restic-backup@NAME.timer
+    sudo systemctl start btrfs-restic-backup@NAME.timer
     ```
 
 > [!TIP]
-> You may wish to add `After=mnt-raid.mount` to the drop-in file so that the service only gets run once the BTRFS device is mounted. Use `systemctl list-units --type=mount` to see all available mounts.
+> You may wish to add a `After=NAME.mount` to the drop-in file so that the service only gets run once the BTRFS device is mounted. Use `systemctl list-units --type=mount` to see all available mounts.
 
 ## Getting notified if the back up fails
 
@@ -62,5 +60,5 @@ As systemd supports 'drop-in' directories (e.g. `/usr/local/lib/systemd/system/b
 `ExecStartPre` and `ExecStopPost` can also be used to [integrate with healthchecks.io](https://healthchecks.io/docs/monitoring_systemd_tasks/).
 
 ## TODO list
-- separate systemd unit running verify?
-- add a test to verify `ExecStopPost` behaves as expected?
+- Separate systemd unit running verify? How would you stop the two units from running at the same time?
+- Add a test to verify `ExecStopPost` behaves as expected?
