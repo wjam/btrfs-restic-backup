@@ -81,4 +81,4 @@ jobs:
         run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
 
       - name: Check check was run
-        run: test -f /var/lib/btrfs-restic-backup/last_check_time
+        run: test -f /var/lib/btrfs-restic-backup@test/last_check_time
