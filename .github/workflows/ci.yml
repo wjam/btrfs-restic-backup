@@ -5,6 +5,10 @@ on:
 permissions:
   contents: read
 
+concurrency: # Avoid needlessly continuing the workflow when there's a newer commit
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ci:
     name: Test
@@ -60,7 +64,7 @@ jobs:
           Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
           # alter content of test file to verify the snapshot is being backed up
-          ExecStartPre=${{ github.workspace}}/.github/output_content_to_file.sh foo $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
+          ExecStartPre=$GITHUB_WORKSPACE/.github/output_content_to_file.sh foo $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
           ExecStart=/usr/bin/echo visual-confirmation-that-this-happens-after-exec-start-in-main-service
           EOF
 
