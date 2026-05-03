@@ -2,11 +2,13 @@ name: ci.yml
 on:
   push: {}
 
+permissions:
+  contents: read
+
 jobs:
   ci:
+    name: Test
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
     env:
       FAKE_DEV: /dev/fake-dev0
       ROOT_VOL: ${{ github.workspace }}/test/root
@@ -82,3 +84,10 @@ jobs:
 
       - name: Check check was run
         run: test -f /var/lib/btrfs-restic-backup@test/last_check_time
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
+        with:
+          advanced-security: 'false'
+          persona: auditor
+          annotations: 'true'
