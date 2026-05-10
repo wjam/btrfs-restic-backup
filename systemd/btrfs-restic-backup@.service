@@ -4,6 +4,9 @@ Wants=%N.timer
 Requires=network-online.target
 After=network-online.target
 
+[Install]
+WantedBy=multi-user.target
+
 [Service]
 Type=oneshot
 
@@ -25,6 +28,9 @@ Environment="SNAPSHOT_NAME=@%N"
 # Placeholder to allow exclusion of things from backing up, such as `--exclude-file file` or `--exclude-if-present filename[:header]`
 Environment="BACKUP_EXCLUDES="
 
+# Placeholder for general options, such as setting ssh command
+Environment="RESTIC_OPTIONS="
+
 # Subset of data to perform a check of
 Environment="CHECK_DATA_SUBSET=0.1%"
 
@@ -45,8 +51,7 @@ Environment="RETENTION_YEARS=0"
 # Other environment vairables that should be set include RESTIC_REPOSITORY and RESTIC_PASSWORD
 
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
-# TODO Default BACKUP_PATHS to $BTRFS_SUBVOL?
-ExecStart=/usr/local/bin/btrfs-restic-backup.sh --cache-dir $CACHE_DIRECTORY --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
-ExecStart=/usr/local/bin/btrfs-restic-check.sh --read-data-subset ${CHECK_DATA_SUBSET}
-ExecStartPost=/usr/bin/restic --cache-dir $CACHE_DIRECTORY forget --prune --max-unused 5G --verbose --keep-hourly ${RETENTION_HOURS} --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
+ExecStart=/usr/local/bin/btrfs-restic-backup.sh ${RESTIC_OPTIONS} --cache-dir $CACHE_DIRECTORY --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
+ExecStart=/usr/local/bin/btrfs-restic-check.sh ${RESTIC_OPTIONS} --read-data-subset ${CHECK_DATA_SUBSET}
+ExecStartPost=/usr/bin/restic ${RESTIC_OPTIONS} --cache-dir $CACHE_DIRECTORY forget --prune --max-unused 5G --verbose --keep-hourly ${RETENTION_HOURS} --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
 ExecStopPost=/usr/local/bin/btrfs-restic-delete-snapshot.sh

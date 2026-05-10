@@ -20,27 +20,31 @@ From https://www.postgresql.org/docs/current/backup-file.html.
 > [!TIP]
 > Given you want to keep to the [3-2-1 backup strategy](https://www.backblaze.com/blog/the-3-2-1-backup-strategy/), these units are [template unit files](https://fedoramagazine.org/systemd-template-unit-files/) so that backups can be run against multiple repository locations.
 
+> [!NOTE]
+> Example commands assume the use of [Hetzner storage box](https://www.hetzner.com/storage/storage-box/).
+
 1. Install `restic`
     ```shell
-    sudo apt-get update && sudo apt-get install -y restic
+    sudo apt update && sudo apt install restic
     ```
-2. Copy [./scripts](./scripts) to `/usr/local/bin`
-3. Copy [./systemd](./systemd) to `/usr/local/lib/systemd/system/`
+2. Copy the contents of [./scripts](./scripts) to `/usr/local/bin`
+3. Copy the contents of [./systemd](./systemd) to `/usr/local/lib/systemd/system/`
 4. Create drop-in directories for configuration
     ```shell
     sudo mkdir /usr/local/lib/systemd/system/btrfs-restic-backup@NAME.service.d
     ```
-5. Populate drop-in file with specific configuration, such as:
+5. Populate drop-in file at `/usr/local/lib/systemd/system/btrfs-restic-backup@NAME.service.d/env.conf` with specific configuration, such as:
     ```unit file (systemd)
     [Service]
     Environment="BTRFS_SUBVOL=/usr/local/path"
     Environment="BACKUP_PATHS=/usr/local/path"
-    Environment="RESTIC_REPOSITORY=sftp:user@host:/srv/restic-repo init"
+    Environment="RESTIC_REPOSITORY=sftp://user@user.your-storagebox.de:23/name"
     Environment="RESTIC_PASSWORD=the-password-for-the-repo"
+    Environment="RESTIC_OPTIONS=--option=sftp.args='-i/path/to/ssh/key'"
     ```
 6. Initialise the new Restic repository, assuming it is new
     ```shell
-    restic init --repo sftp:user@host:/srv/restic-repo init
+    restic init --option=sftp.args='-i/path/to/ssh/key' --repo sftp://user@user.your-storagebox.de:23/name init
     ```
 7. Enable the new backup
     ```shell
@@ -51,7 +55,7 @@ From https://www.postgresql.org/docs/current/backup-file.html.
     ```
 
 > [!TIP]
-> You may wish to add a `After=NAME.mount` to the drop-in file so that the service only gets run once the BTRFS device is mounted. Use `systemctl list-units --type=mount` to see all available mounts.
+> You may wish to add a `RequiresMountsFor=/usr/local/path` to the drop-in file so that the service only gets run once the BTRFS device is mounted.
 
 ## Getting notified if the back up fails
 

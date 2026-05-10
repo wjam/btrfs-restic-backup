@@ -2,6 +2,9 @@
 Description=Run Restic to backup a BTRFS subvolume
 Requires=%N.service
 
+[Install]
+WantedBy=multi-user.target
+
 [Timer]
 Unit=%N.service
 OnCalendar=daily
