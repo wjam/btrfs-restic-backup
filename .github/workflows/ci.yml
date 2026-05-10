@@ -60,7 +60,6 @@ jobs:
           sudo tee /usr/local/lib/systemd/system/btrfs-restic-backup@test.service.d/env.conf << EOF
           [Service]
           Environment="BTRFS_SUBVOL=$TEST_SUBVOL"
-          Environment="BACKUP_PATHS=$TEST_SUBVOL"
           Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
           # alter content of test file to verify the snapshot is being backed up
