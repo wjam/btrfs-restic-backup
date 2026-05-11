@@ -29,4 +29,8 @@ fi
 
 args+=( "$@" )
 
+if [ -n "${BACKUP_EXCLUDE_FILE:-}" ]; then
+  args+=( "--exclude-file" "${BACKUP_EXCLUDE_FILE}" )
+fi
+
 restic backup "${args[@]}"

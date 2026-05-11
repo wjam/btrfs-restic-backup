@@ -38,7 +38,11 @@ jobs:
         run: .github/create_btrfs_subvolume.sh "$FAKE_DEV" "$ROOT_VOL" "$TEST_SUBVOL_NAME" "$TEST_SUBVOL"
 
       - name: Add testdata to the subvolume
-        run: sudo .github/output_content_to_file.sh "$CONTENT" "$TEST_SUBVOL/file.txt"
+        run: |
+          sudo mkdir $TEST_SUBVOL/sub
+          sudo .github/output_content_to_file.sh "$CONTENT" "$TEST_SUBVOL/file.txt"
+          sudo .github/output_content_to_file.sh "file should be ignored" "$TEST_SUBVOL/ignored1.txt"
+          sudo .github/output_content_to_file.sh "file should also be ignored" "$TEST_SUBVOL/sub/ignored2.txt"
 
       - name: Install restic
         run: |
@@ -63,9 +67,14 @@ jobs:
           Environment="BACKUP_PATHS=$TEST_SUBVOL"
           Environment="RESTIC_REPOSITORY=$RESTIC_REPOSITORY"
           Environment="RESTIC_PASSWORD=$RESTIC_PASSWORD"
+          Environment="BACKUP_EXCLUDE_FILE=/usr/local/lib/systemd/system/btrfs-restic-backup@test.service.d/exclude.txt"
           # alter content of test file to verify the snapshot is being backed up
           ExecStartPre=$GITHUB_WORKSPACE/.github/output_content_to_file.sh foo $ROOT_VOL/$TEST_SUBVOL_NAME/file.txt
           ExecStart=/usr/bin/echo visual-confirmation-that-this-happens-after-exec-start-in-main-service
+          EOF
+          sudo tee /usr/local/lib/systemd/system/btrfs-restic-backup@test.service.d/exclude.txt << EOF
+          ignored1.txt
+          sub/
           EOF
 
       - name: Run unit to backup subvolume
@@ -85,6 +94,12 @@ jobs:
 
       - name: Verify restored contents
         run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
+
+      - name: Verify first ignored file not restored
+        run: .github/verify_file_missing.sh "$TEST_SUBVOL/ignored1.txt"
+
+      - name: Verify second ignored file not restored
+        run: .github/verify_file_missing.sh "$TEST_SUBVOL/sub/ignored2.txt"
 
       - name: Check check was run
         run: test -f /var/lib/btrfs-restic-backup@test/last_check_time
