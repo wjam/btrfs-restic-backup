@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Script which runs restic to remove old snapshots from the repository
-
 # Exit on error. Append || true if you expect an error.
 set -o errexit
 # Exit on error inside any functions or subshells.
@@ -11,16 +9,15 @@ set -o nounset
 # Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump |gzip`
 set -o pipefail
 # Turn on traces, useful while debugging but commented out by default
-#set -o xtrace
-
-if [ -n "${RESTIC_OPTIONS:-}" ]; then
-  args=( "${RESTIC_OPTIONS[@]}" )
-else
-  args=( )
+if [[ -n "${RUNNER_DEBUG:-}" ]]; then
+  set -o xtrace
 fi
 
-args+=( "$@" )
+path=${1:?/path required}
 
-echo "${args[@]}"
+if [ ! -f "$path" ]; then
+  exit 0
+fi
 
-restic forget "${args[@]}"
+echo "expected '$path' to not exist but it does"
+exit 1

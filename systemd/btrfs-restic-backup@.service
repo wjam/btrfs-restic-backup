@@ -25,8 +25,8 @@ StateDirectory=%N
 # Use the name of this systemd service as the BTRFS snapshot name
 Environment="SNAPSHOT_NAME=@%N"
 
-# Placeholder to allow exclusion of things from backing up, such as `--exclude-file file` or `--exclude-if-present filename[:header]`
-Environment="BACKUP_EXCLUDES="
+# Placeholder to the file which will define patterns of things to exclude from the back up
+Environment="BACKUP_EXCLUDE_FILE="
 
 # Placeholder for general options, such as setting ssh command
 Environment="RESTIC_OPTIONS="
@@ -51,7 +51,7 @@ Environment="RETENTION_YEARS=0"
 # Other environment vairables that should be set include RESTIC_REPOSITORY and RESTIC_PASSWORD
 
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
-ExecStart=/usr/local/bin/btrfs-restic-backup.sh --cache-dir $CACHE_DIRECTORY --verbose --one-file-system ${BACKUP_EXCLUDES} ${BACKUP_PATHS}
+ExecStart=/usr/local/bin/btrfs-restic-backup.sh --cache-dir $CACHE_DIRECTORY --verbose --one-file-system ${BACKUP_PATHS}
 ExecStart=/usr/local/bin/btrfs-restic-check.sh --read-data-subset ${CHECK_DATA_SUBSET}
 ExecStartPost=/usr/local/bin/btrfs-restic-forget.sh --cache-dir $CACHE_DIRECTORY --prune --max-unused 5G --verbose --keep-hourly ${RETENTION_HOURS} --keep-daily ${RETENTION_DAYS} --keep-weekly ${RETENTION_WEEKS} --keep-monthly ${RETENTION_MONTHS} --keep-yearly ${RETENTION_YEARS}
 ExecStopPost=/usr/local/bin/btrfs-restic-delete-snapshot.sh
