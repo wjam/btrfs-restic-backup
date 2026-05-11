@@ -48,7 +48,7 @@ Environment="RETENTION_MONTHS=6"
 # Keep the last n yearly snapshots
 Environment="RETENTION_YEARS=0"
 
-# Other environment vairables that should be set include RESTIC_REPOSITORY and RESTIC_PASSWORD
+# Other environment variables that should be set include RESTIC_REPOSITORY and RESTIC_PASSWORD
 
 ExecStartPre=/usr/local/bin/btrfs-restic-create-snapshot.sh
 ExecStart=/usr/local/bin/btrfs-restic-backup.sh --cache-dir $CACHE_DIRECTORY --verbose --one-file-system ${BACKUP_PATHS}
