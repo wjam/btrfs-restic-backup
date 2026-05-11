@@ -24,6 +24,14 @@ if [ "$since_last_run" -lt "$CHECK_INTERVAL_SECONDS" ]; then
   exit 0
 fi
 
-restic check "$@"
+if [ -n "${RESTIC_OPTIONS:-}" ]; then
+  args=( "${RESTIC_OPTIONS[@]}" )
+else
+  args=( )
+fi
+
+args+=( "$@" )
+
+restic check "${args[@]}"
 
 touch "$last_check_file"
