@@ -11,15 +11,7 @@ set -o nounset
 # Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump |gzip`
 set -o pipefail
 # Turn on traces, useful while debugging but commented out by default
-#set -o xtrace
-
-subvolume="$BTRFS_SUBVOL"
-btrfs_dev="$(findmnt --types btrfs --options subvol --target "$subvolume" --nofsroot --output source --noheadings)"
-
-echo "Replacing subvolume with snapshot"
-umount --verbose "$subvolume" 2>&1
-
-mount --types btrfs --options "subvol=$SNAPSHOT_NAME" "$btrfs_dev" "$subvolume"
+set -o xtrace
 
 if [ -n "${RESTIC_OPTIONS:-}" ]; then
   args=( "${RESTIC_OPTIONS[@]}" )
@@ -29,4 +21,6 @@ fi
 
 args+=( "$@" )
 
-restic backup "${args[@]}"
+echo "${args[@]}"
+
+restic forget "${args[@]}"
