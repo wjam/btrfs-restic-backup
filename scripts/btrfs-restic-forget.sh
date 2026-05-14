@@ -21,6 +21,4 @@ fi
 
 args+=( "$@" )
 
-echo "${args[@]}"
-
 restic forget "${args[@]}"

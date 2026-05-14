@@ -59,9 +59,15 @@ From https://www.postgresql.org/docs/current/backup-file.html.
 
 ## Getting notified if the back up fails
 
-As systemd supports 'drop-in' directories (e.g. `/usr/local/lib/systemd/system/btrfs-restic-backup.service.d`), an [`OnFailure` option](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#OnFailure=) can be added to notify any service if something goes wrong.
+As systemd supports 'drop-in' directories (e.g. `/usr/local/lib/systemd/system/btrfs-restic-backup.service.d@NAME`), an [`OnFailure` option](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#OnFailure=) can be added to notify any service if something goes wrong.
 
-`ExecStartPre` and `ExecStopPost` can also be used to [integrate with healthchecks.io](https://healthchecks.io/docs/monitoring_systemd_tasks/).
+`ExecStartPre` and `ExecStopPost` can also be used to [integrate with healthchecks.io](https://healthchecks.io/docs/monitoring_systemd_tasks/) using a drop-in file to `/usr/local/lib/systemd/system/btrfs-restic-backup.service.d@NAME/healthcheck.conf` like this:
+
+```unit file (systemd)
+[Service]
+ExecStartPre=-curl -sS -m 10 --retry 5 https://hc-ping.com/your-uuid-here/start
+ExecStopPost=curl -sS -m 10 --retry 5 https://hc-ping.com/your-uuid-here/${EXIT_STATUS}
+```
 
 ## TODO list
 - Separate systemd unit running verify? How would you stop the two units from running at the same time?
