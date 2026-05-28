@@ -10,6 +10,25 @@ concurrency: # Avoid needlessly continuing the workflow when there's a newer com
   cancel-in-progress: true
 
 jobs:
+  restore:
+    name: Restore test
+    runs-on: ubuntu-24.04
+    env:
+      RESTIC_REPOSITORY: ${{ github.workspace }}/testdata/repo
+      RESTIC_PASSWORD: secure-password
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: 'false'
+
+      - name: Install restic
+        run: |
+          sudo apt-get update && sudo apt-get install -y restic
+
+      - name: Verify restored data matches expected content
+        run: .github/verify_restore.sh
+
   ci:
     name: Test
     runs-on: ubuntu-24.04
