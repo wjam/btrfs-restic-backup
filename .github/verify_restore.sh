@@ -17,7 +17,7 @@ root="$(git rev-parse --show-toplevel)"
 
 out="$(mktemp -d)"
 
-restic restore --target "$out" latest
+"$root/scripts/btrfs-restic-restore.sh" "$out" latest
 
 tree "$out/repo/content"
 
