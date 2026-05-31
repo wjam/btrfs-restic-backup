@@ -16,4 +16,4 @@ set -o pipefail
 target=${1:-/}
 snapshot=${2:-latest}
 
-restic ${RESTIC_CACHE:-} restore "$snapshot" --target "$target"
+restic restore "$snapshot" --target "$target"
