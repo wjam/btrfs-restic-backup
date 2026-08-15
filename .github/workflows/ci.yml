@@ -31,7 +31,11 @@ jobs:
 
   restore:
     name: Restore test
-    runs-on: ubuntu-24.04
+    # https://docs.github.com/en/actions/reference/runners/github-hosted-runners
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["ubuntu-24.04", "ubuntu-26.04"]
     env:
       RESTIC_REPOSITORY: ${{ github.workspace }}/testdata/repo
       RESTIC_PASSWORD: secure-password
@@ -50,7 +54,11 @@ jobs:
 
   ci:
     name: Test
-    runs-on: ubuntu-24.04
+    # https://docs.github.com/en/actions/reference/runners/github-hosted-runners
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["ubuntu-24.04", "ubuntu-26.04"]
     env:
       FAKE_DEV: /dev/fake-dev0
       ROOT_VOL: ${{ github.workspace }}/test/root
