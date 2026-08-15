@@ -115,7 +115,7 @@ jobs:
         run: .github/delete_btrfs_subvolume.sh "$ROOT_VOL" "$TEST_SUBVOL_NAME" "$TEST_SUBVOL"
 
       - name: Restore from backup
-        run: sudo --preserve-env scripts/btrfs-restic-restore.sh
+        run: sudo --preserve-env='RESTIC_REPOSITORY,RESTIC_PASSWORD' scripts/btrfs-restic-restore.sh
 
       - name: Verify restored contents
         run: .github/verify_content.sh "$TEST_SUBVOL/file.txt" "$CONTENT"
