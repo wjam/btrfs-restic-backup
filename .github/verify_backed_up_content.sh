@@ -16,7 +16,7 @@ fi
 path=${1:?/backed up path required}
 expected=${2:?expected content required}
 
-actual="$(sudo --preserve-env restic dump latest "$path")"
+actual="$(sudo --preserve-env='RESTIC_REPOSITORY,RESTIC_PASSWORD' restic dump latest "$path")"
 
 if [ "$actual" == "$expected" ]; then
   exit 0
